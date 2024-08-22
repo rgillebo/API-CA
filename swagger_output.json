@@ -1,0 +1,994 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Todo List API",
+    "description": "This API handles operations related to managing todo lists including categories and statuses.",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Users",
+      "description": "Endpoints related to user functionalities"
+    },
+    {
+      "name": "Todos",
+      "description": "Endpoints related to todo functionalities"
+    },
+    {
+      "name": "Categories",
+      "description": "Endpoints related to category functionalities"
+    },
+    {
+      "name": "Statuses",
+      "description": "Endpoints related to status functionalities"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/users/signup": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Endpoint to register a new user",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "User Information",
+            "schema": {
+              "$ref": "#/definitions/NewUser"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User registered successfully."
+          },
+          "400": {
+            "description": "Email and password are required."
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Endpoint for user login",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "User Login Information",
+            "schema": {
+              "$ref": "#/definitions/UserLogin"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login successful"
+          },
+          "401": {
+            "description": "Unauthorized. Invalid email or password."
+          },
+          "500": {
+            "description": "Error processing login request."
+          }
+        }
+      }
+    },
+    "/users/fail": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Unauthorized access endpoint",
+        "responses": {
+          "401": {
+            "description": "Unauthorized access"
+          }
+        }
+      }
+    },
+    "/todos/deleted": {
+      "get": {
+        "tags": [
+          "Todos"
+        ],
+        "description": "Retrieve all todos that are marked as deleted",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of deleted todos",
+            "schema": {
+              "$ref": "#/definitions/DeletedTodo"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/todos/all": {
+      "get": {
+        "tags": [
+          "Todos"
+        ],
+        "description": "Retrieve all todos including those with deleted status",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all todos",
+            "schema": {
+              "$ref": "#/definitions/TodoList"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/todos": {
+      "get": {
+        "tags": [
+          "Todos"
+        ],
+        "description": "Retrieve all todos except those with deleted status",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of todos",
+            "schema": {
+              "$ref": "#/definitions/TodoList"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Todos"
+        ],
+        "description": "Create a new todo",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Todo data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NewTodo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo created",
+            "schema": {
+              "$ref": "#/definitions/NewTodo"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Error creating todo"
+          }
+        }
+      }
+    },
+    "/todos/{id}": {
+      "get": {
+        "tags": [
+          "Todos"
+        ],
+        "description": "Retrieve a specific todo by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Todo ID"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo found",
+            "schema": {
+              "$ref": "#/definitions/Todo"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Todo not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Todos"
+        ],
+        "description": "Update a specific todo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Todo ID"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Updated todo data",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateTodo"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo updated",
+            "schema": {
+              "$ref": "#/definitions/UpdatedTodo"
+            }
+          },
+          "400": {
+            "description": "Invalid data or not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Error updating todo"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Todos"
+        ],
+        "description": "Delete a specific todo by marking its status as deleted",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Todo ID"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo deleted",
+            "schema": {
+              "$ref": "#/definitions/DeletedTodo"
+            }
+          },
+          "400": {
+            "description": "Todo cannot be deleted or not found"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Error deleting todo"
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "description": "Retrieve all categories for the logged-in user",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all categories",
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Categories"
+        ],
+        "description": "Create a new category",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "example": "any"
+                }
+              }
+            },
+            "description": "Category name",
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Category created successfully",
+            "schema": {
+              "$ref": "#/definitions/NewCategory"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/categories/{id}": {
+      "get": {
+        "tags": [
+          "Categories"
+        ],
+        "description": "Retrieve a specific category by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Category ID"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category found",
+            "schema": {
+              "$ref": "#/definitions/Category"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Categories"
+        ],
+        "description": "Update an existing category by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Category ID"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "name",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "example": "any"
+                }
+              }
+            },
+            "description": "New category name",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category updated successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Error updating category"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Categories"
+        ],
+        "description": "Delete a category by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string",
+            "description": "Category ID"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Category deleted successfully"
+          },
+          "400": {
+            "description": "Cannot delete category because it is assigned to one or more Todos."
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Category not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/statuses": {
+      "get": {
+        "tags": [
+          "Statuses"
+        ],
+        "description": "Retrieve all statuses",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all statuses",
+            "schema": {
+              "$ref": "#/definitions/Status"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Statuses"
+        ],
+        "description": "Create a new status",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Status created successfully",
+            "schema": {
+              "$ref": "#/definitions/Status"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/statuses/{id}": {
+      "get": {
+        "tags": [
+          "Statuses"
+        ],
+        "description": "Retrieve a specific status by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status found",
+            "schema": {
+              "$ref": "#/definitions/Status"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Status not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Statuses"
+        ],
+        "description": "Update an existing status by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status updated successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Status not found"
+          },
+          "500": {
+            "description": "Error updating status"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Statuses"
+        ],
+        "description": "Delete a status by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Status deleted successfully"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Status not found"
+          },
+          "500": {
+            "description": "Error deleting status"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "NewUser": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "validuser@example.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "validpassword"
+        }
+      }
+    },
+    "UserLogin": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "validuser@example.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "validpassword"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "1"
+        },
+        "email": {
+          "type": "string",
+          "example": "validuser@example.com"
+        }
+      }
+    },
+    "Todo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "1"
+        },
+        "name": {
+          "type": "string",
+          "example": "Sample Todo"
+        },
+        "description": {
+          "type": "string",
+          "example": "Description of a todo item"
+        },
+        "CategoryId": {
+          "type": "string",
+          "example": "1"
+        },
+        "StatusId": {
+          "type": "string",
+          "example": "1"
+        },
+        "UserId": {
+          "type": "string",
+          "example": "1"
+        }
+      }
+    },
+    "TodoList": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "1"
+        },
+        "name": {
+          "type": "string",
+          "example": "Sample Todo"
+        },
+        "description": {
+          "type": "string",
+          "example": "Description of a todo item"
+        },
+        "CategoryId": {
+          "type": "string",
+          "example": "1"
+        },
+        "StatusId": {
+          "type": "string",
+          "example": "1"
+        },
+        "UserId": {
+          "type": "string",
+          "example": "1"
+        }
+      }
+    },
+    "NewTodo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "2"
+        },
+        "name": {
+          "type": "string",
+          "example": "New Sample Todo"
+        },
+        "description": {
+          "type": "string",
+          "example": "Description of a new todo item"
+        },
+        "CategoryId": {
+          "type": "string",
+          "example": "2"
+        },
+        "StatusId": {
+          "type": "string",
+          "example": "2"
+        },
+        "UserId": {
+          "type": "string",
+          "example": "1"
+        }
+      }
+    },
+    "UpdateTodo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Updated Sample Todo"
+        },
+        "description": {
+          "type": "string",
+          "example": "Description of a updated todo item"
+        },
+        "StatusId": {
+          "type": "string",
+          "example": "4"
+        }
+      }
+    },
+    "UpdatedTodo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "1"
+        },
+        "name": {
+          "type": "string",
+          "example": "Updated Sample Todo"
+        },
+        "description": {
+          "type": "string",
+          "example": "Description of a updated todo item"
+        },
+        "CategoryId": {
+          "type": "string",
+          "example": "2"
+        },
+        "StatusId": {
+          "type": "string",
+          "example": "3"
+        },
+        "UserId": {
+          "type": "string",
+          "example": "1"
+        }
+      }
+    },
+    "DeletedTodo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "1"
+        },
+        "name": {
+          "type": "string",
+          "example": "Deleted Sample Todo"
+        },
+        "description": {
+          "type": "string",
+          "example": "Description of a deleted todo item"
+        },
+        "CategoryId": {
+          "type": "string",
+          "example": "3"
+        },
+        "StatusId": {
+          "type": "string",
+          "example": "4"
+        },
+        "UserId": {
+          "type": "string",
+          "example": "1"
+        }
+      }
+    },
+    "Category": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "1"
+        },
+        "name": {
+          "type": "string",
+          "example": "Work"
+        },
+        "UserId": {
+          "type": "string",
+          "example": "1"
+        }
+      }
+    },
+    "NewCategory": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "2"
+        },
+        "name": {
+          "type": "string",
+          "example": "New Category"
+        },
+        "UserId": {
+          "type": "string",
+          "example": "1"
+        }
+      }
+    },
+    "UpdatedCategory": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "2"
+        },
+        "name": {
+          "type": "string",
+          "example": "New Category"
+        },
+        "UserId": {
+          "type": "string",
+          "example": "1"
+        }
+      }
+    },
+    "Status": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "example": "1"
+        },
+        "status": {
+          "type": "string",
+          "example": "Not Started"
+        }
+      }
+    }
+  }
+}
