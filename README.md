@@ -75,7 +75,7 @@ This TODO list api is the back end for a potential web application.
 1. If already navigated to project directory, skip to step 2. If not, in a terminal or command prompt run: 
 
     ```bash 
-    cd path/to/aug23ft-api-ca-1-rgillebo   
+    cd path/to/API-CA  
     ```
 
 2. In a terminal or command prompt, run the following command to start the server: 
